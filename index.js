@@ -3,8 +3,9 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5001;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
+const authRoutes = require('./routes/auth-routes');
 const usersRoutes = require('./routes/users-routes');
-//const usersRoutes = require('./routes/users-routes');
+const eventsRoutes = require('./routes/events-routes');
 
 // Express middleware
 app.use(express.json());
@@ -15,9 +16,9 @@ app.use((req, _res, next) => {
 });
 
 // // Configuring users endpoints
-app.use('/api/users', usersRoutes);
-// // Configuring users endpoints
-//app.use('/api/users', usersRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
+app.use('/events', eventsRoutes);
 
 app.get('/', (_req, res) => {
     res.send('Welcome to Konnect API');

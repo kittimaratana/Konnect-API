@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install": "npm install",
+    "start": "node index.js",
+    "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,9 +14,13 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.8",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "express": "^4.19.1",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "mysql2": "^3.9.2",
+    "react": "^18.2.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
