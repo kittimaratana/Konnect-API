@@ -2,6 +2,7 @@ const knex = require("knex")(require("../knexfile"));
 const jwt = require("jsonwebtoken");
 
 //get events that user is currently not part off
+//GET http://localhost:5001/events
 const getEvent = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -15,22 +16,22 @@ const getEvent = async (req, res) => {
 
     // Verify the token and get event
     try {
-        //pull list of events user is not attending
-        const newEventsId = await knex("user_attendance")
+        //pull list of events user has status in
+        const existingEventsId = await knex("user_attendance")
             .select("event_id")
-            .whereNot({ guest_user_id: userId })
+            .where({ guest_user_id: userId })
             .groupBy("event_id")
 
-        let newEventsList = []
-        newEventsId.forEach(event => {
-            newEventsList.push(event["event_id"])
+        let existingEventsList = []
+        existingEventsId.forEach(event => {
+            existingEventsList.push(event["event_id"])
         })
 
         //redo map and then do first next when the guest is not over
 
         //pull event details
         const newEventsResponse = await knex("event_details")
-            .whereIn("id", newEventsList)
+            .whereNotIn("id", existingEventsList)
             .andWhere("max_guests", ">", "total_guests")
             .first();
 
@@ -42,6 +43,15 @@ const getEvent = async (req, res) => {
 }
 
 //post a new event
+/* POST http://localhost:5001/events
+{
+    "date": "2022-01-01",
+    "time": "8:00 pm",
+    "location": "Terroni",
+    "max_guests": "9",
+    "description": "Come meet me for pasta"
+}
+*/
 const postEvent = async (req, res) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
@@ -103,6 +113,136 @@ const postEvent = async (req, res) => {
     }
 }
 
+//get user attendance list for event 
+//GET http://localhost:5001/events/55 -- remember to get eventId not userId
+const userAttendanceList = async (req, res) => {
+
+    if (!req.headers.authorization) {
+        return res.status(401).send("Please login");
+    }
+
+    /*
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+    const decodedToken = jwt.verify(authToken, "secret_key");
+    */
+
+    // Verify the token and get event
+    try {
+        const userAttendanceList = await knex("user_attendance")
+            .join("users", "users.id", "user_attendance.guest_user_id")
+            .select(
+                "users.id",
+                "users.first_name",
+                "users.last_name",
+                "user_attendance.id as attendence_id",
+                "user_attendance.event_id",
+                "user_attendance.status"
+            )
+            .where({ "user_attendance.event_id": req.params.eventId })
+            .whereIn("user_attendance.status", ["Pending", "Going"])
+
+        res.status(200).json(userAttendanceList);
+    } catch (error) {
+        console.error(error);
+        res.status(401).send("Could not get data");
+    }
+}
+
+//post attendance status whether Pending 
+//needs event_id, status
+const postAttendanceStatus = async (req, res) => {
+
+    if (!req.headers.authorization) {
+        return res.status(401).send("Please login");
+    }
+
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+    const decodedToken = jwt.verify(authToken, "secret_key");
+    const userId = decodedToken.id;
+    const { event_id, status } = req.body;
+
+    //which one to put in response probably created Event
+    const attendanceInput = {
+        event_id: event_id,
+        status: status,
+        guest_user_id: userId
+    };
+
+    try {
+        await knex("user_attendance").insert(attendanceInput);
+
+        const createdAttendanceInput = await knex("user_attendance")
+            .where({ event_id: event_id })
+            .andWhere({ guest_user_id: userId })
+            .first();
+
+        res.status(201).json(createdAttendanceInput);
+    } catch (error) {
+        console.error(error);
+        res.status(401).send("Could not get data");
+    }
+}
+
+//update attendance status - {options going, cancelled, rejected}, hosting, pending
+//probably need to have queing system long term
+//Going -> add one space and call information, if full change everyone else to Rejected, change the user to Going, 
+//Rejected -> change the user to rejected
+//Cancelled -> change the user to cancelled
+//needs event_id, status, user_id
+const updateAttendanceStatus = async (req, res) => {
+
+    if (!req.headers.authorization) {
+        return res.status(401).send("Please login");
+    }
+
+    /*
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader.split(" ")[1];
+    const decodedToken = jwt.verify(authToken, "secret_key");
+    //const hostuserId = decodedToken.id;
+    */
+
+    const { attendance_id, event_id, status, user_id } = req.body;
+    const attendanceInput = {
+        event_id: event_id,
+        status: status,
+        guest_user_id: user_id,
+    };
+
+    //if going, change event_details guest count
+    if (status === "Going") {
+        const updatedEventDetailsRow = await knex("event_details")
+            .where({ id: event_id })
+            .increment("total_guests", 1);
+
+        console.log(updatedEventDetailsRow);
+
+        //if total guest is equal to max guest set all remaining pending statuses to rejected except current guest
+        const currentEventDetails = await knex("event_details")
+            .where({ id: event_id })
+            .first()
+
+        if (currentEventDetails["total_guests"] === currentEventDetails["max_guests"]) {
+
+            await knex("user_attendance").where({ event_id: event_id }).andWhereNot({ guest_user_id: user_id }).update({ status: "Cancelled" });
+        }
+    }
+
+    //update the event status for guest
+    await knex("user_attendance")
+    .where({ id: attendance_id })
+    .update(attendanceInput);
+
+    const createdAttendanceInput = await knex("user_attendance")
+        .where({ event_id: event_id })
+        .andWhere({ guest_user_id: user_id })
+        .first();
+
+    res.status(201).json(createdAttendanceInput);
+}
+
 //get upcoming events
 const getUpcomingEvents = async (req, res) => {
 
@@ -114,14 +254,13 @@ const getUpcomingEvents = async (req, res) => {
     const authToken = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
+    console.log(userId)
 
     // Verify the token and get event
     try {
         //pull list of events user is attending or pending
         const upcomingEvents = await knex("user_attendance")
-            .join("event_details", function () {
-                this.on("event_details.id", "user_attendance.event_id")
-            })
+            .join("event_details", "event_details.id", "user_attendance.event_id")
             .select(
                 "event_details.id",
                 "event_details.user_id",
@@ -161,7 +300,7 @@ const getHostingEvents = async (req, res) => {
             .where("status", "Pending")
             .groupBy("event_id")
 
-        let pendingEventsSet = newSet();
+        let pendingEventsSet = new Set();
         pendingEvents.forEach(event => {
             pendingEventsSet.add(event["event_id"])
         })
@@ -195,23 +334,16 @@ const getHostingEvents = async (req, res) => {
         res.status(200).json(eventsHostingDetailed);
     } catch (error) {
         console.error(error);
-        res.status(401).send("Invalid auth token");
+        res.status(401).send("Unable to pull events user are hosting");
     }
 }
-
 
 module.exports = {
     getEvent,
     postEvent,
+    userAttendanceList,
+    postAttendanceStatus,
+    updateAttendanceStatus,
     getUpcomingEvents,
     getHostingEvents,
-
 };
-
-/*,
-    joinEventRequest,
-    updateEventStatus,
-    //users?
-*/
-
-//users need to put if they care about going
