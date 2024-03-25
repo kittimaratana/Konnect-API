@@ -149,7 +149,7 @@ const userAttendanceList = async (req, res) => {
     }
 }
 
-//post attendance status whether Pending 
+//post attendance status whether Pending, Cancelled
 //needs event_id, status
 const postAttendanceStatus = async (req, res) => {
 
@@ -290,7 +290,9 @@ const getHostingEvents = async (req, res) => {
     const authHeader = req.headers.authorization;
     const authToken = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(authToken, "secret_key");
+    console.log(decodedToken);
     const userId = decodedToken.id;
+    console.log(userId);
 
     // Verify the token and get event
     try {

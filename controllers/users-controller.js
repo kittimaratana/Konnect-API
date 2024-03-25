@@ -37,6 +37,7 @@ const getUser = async (req, res) => {
   const authHeader = req.headers.authorization;
   const authToken = authHeader.split(" ")[1];
   const decodedToken = jwt.verify(authToken, "secret_key");
+  console.log(decodedToken);
   const userId = decodedToken.id;
 
   // Verify the token and call user to get details
@@ -64,6 +65,7 @@ http://localhost:5001/users
   }
 */
 const updateUser = async (req, res) => {
+
   if (!req.headers.authorization) {
     return res.status(401).send("Please login");
   }
@@ -75,9 +77,6 @@ const updateUser = async (req, res) => {
   const userId = decodedToken.id;
 
   const requiredFields = [
-    "first_name",
-    "last_name",
-    "email",
     "gender",
     "birthday",
     "career",
@@ -111,10 +110,10 @@ const updateUser = async (req, res) => {
 
     const updatedUserAccount = {
       id: userResponse.id,
-      first_name: req.body["first_name"],
-      last_name: req.body["last_name"],
-      email: req.body["email"],
-      password: userResponse.password,
+      first_name: userResponse["first_name"],
+      last_name: userResponse["last_name"],
+      email: userResponse["email"],
+      password: userResponse["password"],
       gender: req.body["gender"],
       birthday: req.body["birthday"],
       career: req.body["career"],

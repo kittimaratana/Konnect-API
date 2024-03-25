@@ -2,14 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5001;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
+//const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:8081";
 const authRoutes = require('./routes/auth-routes');
 const usersRoutes = require('./routes/users-routes');
 const eventsRoutes = require('./routes/events-routes');
 
 // Express middleware
 app.use(express.json());
-app.use(cors({ origin: CORS_ORIGIN }));
+//app.use(cors({ origin: CORS_ORIGIN }));
 app.use((req, _res, next) => {
     next();
 
