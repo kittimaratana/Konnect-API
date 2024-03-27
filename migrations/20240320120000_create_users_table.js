@@ -10,7 +10,7 @@ exports.up = function (knex) {
         table.string('email').notNullable();
         table.string('password').notNullable();
         table.string('gender').notNullable();
-        table.timestamp('birthday').notNullable();
+        table.date('birthday').notNullable();
         table.string('career').notNullable();
         table.string('city').notNullable();
         table.string('interests').notNullable();

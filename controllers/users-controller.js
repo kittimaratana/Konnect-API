@@ -1,7 +1,8 @@
 const knex = require("knex")(require("../knexfile"));
 const jwt = require("jsonwebtoken");
+const multer = require('multer');
 
-//fields to select for warehouse
+//fields to select for users
 const userAttr = [
   "id",
   "first_name",
@@ -16,6 +17,18 @@ const userAttr = [
   "bio",
   "pet_peeves"
 ];
+
+let imageName="";
+
+//middleware to upload images
+const imageStorage = multer.diskStorage({
+  destination: './public/images/',
+  filename: (req, file, cb) => {
+    const filename = `${imageName}.jpg`;  
+    cb(null, filename);
+  }
+})
+const uploadImage = multer({storage: imageStorage});
 
 //get main user profile
 /* GET
@@ -54,18 +67,7 @@ const getUser = async (req, res) => {
   }
 }
 
-//get main user profile
-/* POST
-http://localhost:5001/users
- headers: {
-    authorization: "Bearer " + token,
-  },
-  data: {
-    // Your body data here
-  }
-*/
 const updateUser = async (req, res) => {
-
   if (!req.headers.authorization) {
     return res.status(401).send("Please login");
   }
@@ -75,6 +77,7 @@ const updateUser = async (req, res) => {
   const authToken = authHeader.split(" ")[1]; 
   const decodedToken = jwt.verify(authToken, "secret_key");
   const userId = decodedToken.id;
+  imageName = userId;
 
   const requiredFields = [
     "gender",
@@ -107,6 +110,7 @@ const updateUser = async (req, res) => {
         message: `User was not found`,
       });
     }
+    uploadImage.single('image');
 
     const updatedUserAccount = {
       id: userResponse.id,
@@ -119,7 +123,7 @@ const updateUser = async (req, res) => {
       career: req.body["career"],
       city: req.body["city"],
       interests: req.body["interests"],
-      picture: req.body["picture"],
+      picture: `/images/${imageName}.jpg`, 
       bio: req.body["bio"],
       pet_peeves: req.body["pet_peeves"]
     };

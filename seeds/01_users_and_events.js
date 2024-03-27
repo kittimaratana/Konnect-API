@@ -1,5 +1,5 @@
 const { faker } = require('@faker-js/faker');
-const { activities, petPeeves } = require("../variables/constants");
+const { activities, petPeeves, userProfile } = require("../variables/constants");
 const {v4: uuid} = require('uuid');
 
 /**
@@ -30,33 +30,32 @@ function createUser() {
   let users = [];
   let events = [];
   
-  for(let i=0; i<200;i++) {
+  for(let i=0; i<50;i++) {
 
     const {interests, eventDetails} = interestList();
-    const userUuid = uuid();
 
     users.push({
-      id: userUuid,
-      first_name: faker.person.firstName(),
-      last_name: faker.person.lastName(),
+      id: userProfile[i]["id"], //predefined
+      first_name: userProfile[i]["first_name"], //predefined
+      last_name: userProfile[i]["last_name"], //predefined
       email: faker.internet.email(),
       password: faker.internet.password(),
-      gender: faker.person.gender(),
+      gender: userProfile[i]["gender"], //predefined
       birthday: faker.date.between({from: '1980-01-01', to: '2014-01-05'}).toLocaleString("en-CA").substring(0,10),
       career: faker.person.jobTitle(),
       city: faker.location.city(),
       interests: `${interests}`,
-      picture: faker.image.avatar(),
+      picture: `/images/${userProfile[i]["id"]}.jpg`, 
       bio: faker.person.bio(),
       pet_peeves: randomItem(petPeeves)
     });
 
     //every 10th person make an event but users can only make one event
-    if (i%10 === 0) {
+    if (i%5 === 0) {
       const eventDetail = eventDetails[0];
 
       events.push({
-        user_id: userUuid,
+        user_id: userProfile[i]["id"],
         date: faker.date.between({from: '2024-04-05', to: '2024-04-19'}).toLocaleString("en-CA").substring(0,10),
         location: eventDetail.location,
         max_guests: Math.floor(Math.random()*7) + 2,

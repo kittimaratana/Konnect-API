@@ -224,4 +224,308 @@ const petPeeves = [
     'Using excessive sarcasm in serious conversations',
 ];
 
-module.exports = {activities, petPeeves};
+const userProfile =
+[
+  {
+    id: 'f367b301-a9b4-43d8-b5ff-eb5519aaf841',
+    first_name: 'Francisco',
+    last_name: 'Wolf',
+    gender: 'Transgender female'
+  },
+  {
+    id: '49b54e87-5168-493b-8c3d-ad1634960d94',
+    first_name: 'Sidney',
+    last_name: 'Kassulke',
+    gender: 'Male'
+  },
+  {
+    id: '5ae2b368-c215-4fe0-9632-3326f4b3ae0f',
+    first_name: 'Jamison',
+    last_name: 'Jacobs',
+    gender: 'Male'
+  },
+  {
+    id: '0e09fea2-6bcc-4dd6-8cb6-d3e6473875df',
+    first_name: 'Gerson',
+    last_name: 'Shanahan',
+    gender: 'Female'
+  },
+  {
+    id: '6f72b094-75da-438f-8566-3f22b0686afc',
+    first_name: 'Chet',
+    last_name: 'Weber',
+    gender: 'Male'
+  },
+  {
+    id: 'c262a4df-908a-4cf6-aa6b-0de4b4f27cfb',
+    first_name: 'Heber',
+    last_name: 'Champlin',
+    gender: 'Female'
+  },
+  {
+    id: '2bfb69f5-c7e2-44b6-aee7-532aa11d91ab',
+    first_name: 'Trent',
+    last_name: 'Wunsch',
+    gender: 'Male'
+  },
+  {
+    id: 'bfb60f93-39ae-4915-8ba1-bafef90b7490',
+    first_name: 'Shaylee',
+    last_name: 'Feest',
+    gender: 'Male'
+  },
+  {
+    id: 'd2ce4d6a-9103-4541-845c-9a97239d469a',
+    first_name: 'Cordell',
+    last_name: 'Moore',
+    gender: 'Male'
+  },
+  {
+    id: 'c33959f4-1c36-435c-af95-8bcad4f1e779',
+    first_name: 'Lonzo',
+    last_name: 'Wehner',
+    gender: 'Female'
+  },
+  {
+    id: '90e55d3e-e88b-4810-b05c-dd49b7afa134',
+    first_name: 'Nella',
+    last_name: 'Frami',
+    gender: 'Transexual male'
+  },
+  {
+    id: '06a3d93d-1e70-42a7-9b9f-92c27f2dbe91',
+    first_name: 'Andrew',
+    last_name: 'Donnelly',
+    gender: 'Male'
+  },
+  {
+    id: '6a4fbf26-1676-4775-b20c-6c7d06be3175',
+    first_name: 'Dell',
+    last_name: 'Klein',
+    gender: 'Male'
+  },
+  {
+    id: '75b66386-0ac2-4b7a-9aa3-573e977600b2',
+    first_name: 'Myriam',
+    last_name: 'Gottlieb',
+    gender: 'Female'
+  },
+  {
+    id: '16b3b6e3-2e70-419e-8bc3-10e92ad7b74a',
+    first_name: 'Ressie',
+    last_name: 'Keebler',
+    gender: 'Male'
+  },
+  {
+    id: '162f0d54-f5c6-4a1d-be4b-534c79639b8b',
+    first_name: 'Jennifer',
+    last_name: 'Runolfsdottir',
+    gender: 'Female'
+  },
+  {
+    id: '062e001f-b458-44cf-a68c-1f6198910e43',
+    first_name: 'Evelyn',
+    last_name: 'Fisher',
+    gender: 'Female'
+  },
+  {
+    id: 'fcf6b01b-0e47-492a-bc8d-78a0ddcc25d9',
+    first_name: 'Ryley',
+    last_name: 'Steuber',
+    gender: 'Female'
+  },
+  {
+    id: 'bcbdb787-eee5-4b4e-8cd1-e353e8ed47fb',
+    first_name: 'Joaquin',
+    last_name: 'Emard',
+    gender: 'Male'
+  },
+  {
+    id: '3942a6ee-1d4f-4443-bcdd-2c0745730d10',
+    first_name: 'Elisa',
+    last_name: 'Bradtke',
+    gender: 'Female'
+  },
+  {
+    id: '3bb3389c-60f9-4d01-84ae-b0b002749440',
+    first_name: 'Myrtice',
+    last_name: 'Runolfsdottir',
+    gender: 'Female to male trans man'
+  },
+  {
+    id: '3818c3ea-0768-487a-89c5-c7b5c002c601',
+    first_name: 'Morgan',
+    last_name: 'Leuschke',
+    gender: 'Female'
+  },
+  {
+    id: '0f1791bf-1d36-4253-96ba-983eed0051bf',
+    first_name: 'Emily',
+    last_name: 'Bosco',
+    gender: 'Female'
+  },
+  {
+    id: 'dde4d54f-828d-4a0c-9904-8498f2996ba2',
+    first_name: 'Gaetano',
+    last_name: 'Larkin',
+    gender: 'Female'
+  },
+  {
+    id: 'ab750aeb-803a-4ed1-a0b1-f39057b9d5fe',
+    first_name: 'Lucious',
+    last_name: 'Kirlin',
+    gender: 'Female'
+  },
+  {
+    id: '0853e4e6-cdac-4035-b331-8c01c9a71778',
+    first_name: 'Santiago',
+    last_name: 'Schuppe',
+    gender: 'Female'
+  },
+  {
+    id: '4d88a7ef-c120-4918-82c8-de76613a800b',
+    first_name: 'Felipe',
+    last_name: 'Pouros',
+    gender: 'Female'
+  },
+  {
+    id: '58b784a3-be6b-4aba-8380-ca45a2fcde97',
+    first_name: 'Erica',
+    last_name: 'Dickinson',
+    gender: 'Female'
+  },
+  {
+    id: '38663326-7a90-46b0-82f0-bfbc16ccf9f2',
+    first_name: 'Aubrey',
+    last_name: 'West',
+    gender: 'Female'
+  },
+  {
+    id: '8686df93-bd29-433d-9fc8-cc5366cf557f',
+    first_name: 'Syble',
+    last_name: 'Schmidt',
+    gender: 'Female'
+  },
+  {
+    id: 'f8adc636-4c6c-40f7-a038-2548a3ab31c6',
+    first_name: 'Hattie',
+    last_name: 'Towne',
+    gender: 'Trans woman'
+  },
+  {
+    id: '9b17d457-ee25-44db-985a-a08adc20b4d3',
+    first_name: 'Dakota',
+    last_name: 'Farrell',
+    gender: 'Male'
+  },
+  {
+    id: '166f11f8-d546-491c-9b8e-54157d2d7984',
+    first_name: 'Freeda',
+    last_name: 'Kreiger',
+    gender: 'Female'
+  },
+  {
+    id: 'c31e8867-159c-4418-9026-a59a075a5347',
+    first_name: 'Yasmeen',
+    last_name: 'Renner',
+    gender: 'Male'
+  },
+  {
+    id: '2b1be57e-390d-4dfa-bc08-7dd212ff2fcc',
+    first_name: 'Vinnie',
+    last_name: 'Gulgowski',
+    gender: 'Male'
+  },
+  {
+    id: '2b069300-a587-4f8f-9c61-13494737f224',
+    first_name: 'Hailie',
+    last_name: 'Leannon',
+    gender: 'Female'
+  },
+  {
+    id: '7a960ba2-090b-4864-b29d-f4d00cb0cc1f',
+    first_name: 'Alec',
+    last_name: 'Raynor',
+    gender: 'Male'
+  },
+  {
+    id: '34f6711a-e0df-453a-9ce8-8387fb2cf677',
+    first_name: 'Jake',
+    last_name: 'Mills',
+    gender: 'Male'
+  },
+  {
+    id: '8a4cdd0d-a02c-4ad5-83e7-da86896e89e0',
+    first_name: 'Caddy',
+    last_name: 'Hauck',
+    gender: 'Female'
+  },
+  {
+    id: '07415ca0-d989-4869-8986-381c1e23b2ac',
+    first_name: 'Austin',
+    last_name: 'Wintheiser',
+    gender: 'Male'
+  },
+  {
+    id: '4b7b3626-0b55-478a-b7eb-32ea8c007df9',
+    first_name: 'Stacy',
+    last_name: 'Gislason-Hills',
+    gender: 'Woman'
+  },
+  {
+    id: '9a0329b1-8611-4fbd-91fc-fc0223d26f5f',
+    first_name: 'Colt',
+    last_name: 'Pouros',
+    gender: 'Female'
+  },
+  {
+    id: '529750bd-36d9-4a07-95b1-63fbffb033fe',
+    first_name: 'Zachariah',
+    last_name: 'Rath',
+    gender: 'Female'
+  },
+  {
+    id: '263a157d-2c39-49ff-885a-854d1188885f',
+    first_name: 'Jody',
+    last_name: 'Sawayn',
+    gender: 'Female'
+  },
+  {
+    id: '4820b545-85f9-45d2-b8a3-3a0be8654735',
+    first_name: 'Kaley',
+    last_name: 'Murray',
+    gender: 'Male'
+  },
+  {
+    id: '5758958d-5f14-4c8a-96e7-d37967fd9034',
+    first_name: 'Nelda',
+    last_name: 'Marvin',
+    gender: 'Male'
+  },
+  {
+    id: 'a1bd85d9-31ed-4cff-8728-ac3863111622',
+    first_name: 'Niko',
+    last_name: 'Kertzmann',
+    gender: 'Male'
+  },
+  {
+    id: '761493f3-087d-4e00-a663-3b5f1099a7d4',
+    first_name: 'Jasper',
+    last_name: 'Ondricka',
+    gender: 'Male'
+  },
+  {
+    id: '4ea59d1a-0e1f-47a2-b148-2ccfd70af243',
+    first_name: 'Mara',
+    last_name: 'Ondricka',
+    gender: 'Female'
+  },
+  {
+    id: 'e523ec41-6b7f-4ecd-930c-bbe69a6219d4',
+    first_name: 'Moriah',
+    last_name: 'Schowalter',
+    gender: 'Female'
+  }
+]
+
+module.exports = {activities, petPeeves, userProfile};

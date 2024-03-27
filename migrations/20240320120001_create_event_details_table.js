@@ -10,7 +10,7 @@ exports.up = function (knex) {
         .references('users.id')
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
-        table.timestamp('date').notNullable();
+        table.date('date').notNullable();
         table.string('location').notNullable();
         table.integer('max_guests').notNullable();
         table.integer('total_guests').notNullable();

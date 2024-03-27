@@ -7,6 +7,9 @@ const authRoutes = require('./routes/auth-routes');
 const usersRoutes = require('./routes/users-routes');
 const eventsRoutes = require('./routes/events-routes');
 
+//allows request to get static assets in /public folder
+app.use(express.static("public"));
+
 // Express middleware
 app.use(express.json());
 //app.use(cors({ origin: CORS_ORIGIN }));

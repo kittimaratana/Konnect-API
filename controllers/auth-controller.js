@@ -32,7 +32,7 @@ const login = async(req,res) => {
     console.log(token);
     res.status(200).send({ token });
   } catch (err) {
-    res.status(400).send(`Error retrieving users: ${err}`);
+    res.status(401).send(`Login credentials do not match`);
   }
 }
 
@@ -65,7 +65,7 @@ const register = async(req,res) => {
     career: "No career listed",
     city: "Toronto",
     interests: `[No interests]`,
-    picture: "https://loremflickr.com/cache/resized/65535_52899529118_604975ef03_h_640_480_nofilter.jpg",
+    picture: "/images/0e09fea2-6bcc-4dd6-8cb6-d3e6473875df.jpg",
     bio: "No bio",
     pet_peeves: "No pet peeves"
   };
