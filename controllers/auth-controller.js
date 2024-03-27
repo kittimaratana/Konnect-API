@@ -29,7 +29,6 @@ const login = async(req,res) => {
       return res.status(400).send("Invalid email");
     }
     const token = jwt.sign({id: user.id}, "secret_key", {expiresIn: "24h"})
-    console.log(token);
     res.status(200).send({ token });
   } catch (err) {
     res.status(401).send(`Login credentials do not match`);

@@ -50,7 +50,6 @@ const getUser = async (req, res) => {
   const authHeader = req.headers.authorization;
   const authToken = authHeader.split(" ")[1];
   const decodedToken = jwt.verify(authToken, "secret_key");
-  console.log(decodedToken);
   const userId = decodedToken.id;
 
   // Verify the token and call user to get details
