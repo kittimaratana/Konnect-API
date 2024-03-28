@@ -64,7 +64,6 @@ const postEvent = async (req, res) => {
 
     const requiredFields = [
         "date",
-        "time",
         "location",
         "max_guests",
         "description"
@@ -261,6 +260,7 @@ const getUpcomingEvents = async (req, res) => {
         //pull list of events user is attending or pending
         const upcomingEvents = await knex("user_attendance")
             .join("event_details", "event_details.id", "user_attendance.event_id")
+            .join("users", "users.id", "event_details.user_id")
             .select(
                 "event_details.id",
                 "event_details.user_id",
@@ -268,7 +268,8 @@ const getUpcomingEvents = async (req, res) => {
                 "event_details.location",
                 "event_details.max_guests",
                 "event_details.description",
-                "user_attendance.status"
+                "user_attendance.status",
+                "users.picture"
             )
             .whereIn("user_attendance.status", ["Pending", "Going"])
             .andWhere("user_attendance.guest_user_id", userId);
@@ -308,19 +309,21 @@ const getHostingEvents = async (req, res) => {
         })
 
         const eventsHosting = await knex("event_details")
+            .join("users", "users.id", "event_details.user_id")
             .select(
-                "id",
-                "user_id",
-                "date",
-                "location",
-                "max_guests",
-                "description"
+                "event_details.id",
+                "event_details.user_id",
+                "event_details.date",
+                "event_details.location",
+                "event_details.max_guests",
+                "event_details.description",
+                "users.picture"
             )
             .andWhere("event_details.user_id", userId);
 
         let eventsHostingDetailed = []
 
-        eventsHosting.forEach(event => {
+        eventsHosting.forEach(event => {            
             const eventDetails = {
                 id: event["id"],
                 user_id: event["user_id"],
@@ -328,6 +331,7 @@ const getHostingEvents = async (req, res) => {
                 location: event["location"],
                 max_guests: event["max_guests"],
                 description: event["description"],
+                picture: event["picture"],
                 pendingStatus: pendingEventsSet.has(event["id"])
             }
             eventsHostingDetailed.push(eventDetails);
