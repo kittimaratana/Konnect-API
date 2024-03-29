@@ -2,14 +2,6 @@ const knex = require("knex")(require("../knexfile"));
 const jwt = require("jsonwebtoken");
 const {v4: uuid} = require('uuid');
 
-/* POST
-http://localhost:5001/auth/login 
-{
-    "email": "Kelsi24@yahoo.com",
-    "password": "JyqxXpz6dcONsVB"
-}
-*/
-
 //login to an existing account
 const login = async(req,res) => {
   const {email, password} = req.body;
@@ -34,16 +26,6 @@ const login = async(req,res) => {
     res.status(401).send(`Login credentials do not match`);
   }
 }
-
-/* POST 
-http://localhost:5001/auth/register
-{
-    "first_name": "Kittima",
-    "last_name": "Ratana",
-    "email": "kittima.ratana@gmail.com",
-    "password": "JyqxXpz6dcONsVf"
-}
-*/
 
 //register for a new account
 const register = async(req,res) => {

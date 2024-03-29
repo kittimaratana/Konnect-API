@@ -2,7 +2,6 @@ const knex = require("knex")(require("../knexfile"));
 const jwt = require("jsonwebtoken");
 
 //get events that user is currently not part off
-//GET http://localhost:5001/events
 const getEvent = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -216,8 +215,6 @@ const updateAttendanceStatus = async (req, res) => {
             .where({ id: event_id })
             .increment("total_guests", 1);
 
-        console.log(updatedEventDetailsRow);
-
         //if total guest is equal to max guest set all remaining pending statuses to rejected except current guest
         const currentEventDetails = await knex("event_details")
             .where({ id: event_id })
@@ -253,7 +250,6 @@ const getUpcomingEvents = async (req, res) => {
     const authToken = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
-    console.log(userId)
 
     // Verify the token and get event
     try {
@@ -291,9 +287,7 @@ const getHostingEvents = async (req, res) => {
     const authHeader = req.headers.authorization;
     const authToken = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(authToken, "secret_key");
-    console.log(decodedToken);
     const userId = decodedToken.id;
-    console.log(userId);
 
     // Verify the token and get event
     try {
