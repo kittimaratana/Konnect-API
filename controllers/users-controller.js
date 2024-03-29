@@ -1,6 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
 const jwt = require("jsonwebtoken");
-const multer = require('multer');
+const express = require('express');
 
 //fields to select for users
 const userAttr = [
@@ -17,18 +17,6 @@ const userAttr = [
   "bio",
   "pet_peeves"
 ];
-
-let imageName="";
-
-//middleware to upload images
-const imageStorage = multer.diskStorage({
-  destination: './public/images/',
-  filename: (req, file, cb) => {
-    const filename = `${imageName}.jpg`;  
-    cb(null, filename);
-  }
-})
-const uploadImage = multer({storage: imageStorage});
 
 //get main user profile
 /* GET
@@ -84,9 +72,9 @@ const updateUser = async (req, res) => {
     "career",
     "city",
     "interests",
-    "picture",
     "bio",
-    "pet_peeves"
+    "pet_peeves",
+    "picture_name"
   ];
 
   //check if inputs are empty
@@ -109,7 +97,6 @@ const updateUser = async (req, res) => {
         message: `User was not found`,
       });
     }
-    uploadImage.single('image');
 
     const updatedUserAccount = {
       id: userResponse.id,
@@ -122,7 +109,7 @@ const updateUser = async (req, res) => {
       career: req.body["career"],
       city: req.body["city"],
       interests: req.body["interests"],
-      picture: `/images/${imageName}.jpg`, 
+      picture: `/images/${req.body["picture_name"]}`, 
       bio: req.body["bio"],
       pet_peeves: req.body["pet_peeves"]
     };
