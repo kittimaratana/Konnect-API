@@ -133,12 +133,13 @@ const userAttendanceList = async (req, res) => {
                 "users.id",
                 "users.first_name",
                 "users.last_name",
+                "users.picture",
                 "user_attendance.id as attendence_id",
                 "user_attendance.event_id",
                 "user_attendance.status"
             )
             .where({ "user_attendance.event_id": req.params.eventId })
-            .whereIn("user_attendance.status", ["Pending", "Going"])
+            .whereIn("user_attendance.status", ["Pending", "Going", "Hosting"])
 
         res.status(200).json(userAttendanceList);
     } catch (error) {
@@ -203,6 +204,10 @@ const updateAttendanceStatus = async (req, res) => {
     */
 
     const { attendance_id, event_id, status, user_id } = req.body;
+    console.log(attendance_id);
+    console.log(event_id);
+    console.log(status);
+    console.log(user_id);
     const attendanceInput = {
         event_id: event_id,
         status: status,
@@ -338,6 +343,27 @@ const getHostingEvents = async (req, res) => {
     }
 }
 
+//get events that user is currently part of
+const getEventDetails = async (req, res) => {
+
+    if (!req.headers.authorization) {
+        return res.status(401).send("Please login");
+    }
+
+    // Verify the token and get event
+    try {
+        //pull event details
+        const eventsResponse = await knex("event_details")
+            .where({ "id": req.params.eventId })
+            .first();
+
+        res.status(200).json(eventsResponse);
+    } catch (error) {
+        console.error(error);
+        res.status(401).send("Invalid auth token");
+    }
+}
+
 module.exports = {
     getEvent,
     postEvent,
@@ -346,4 +372,5 @@ module.exports = {
     updateAttendanceStatus,
     getUpcomingEvents,
     getHostingEvents,
+    getEventDetails
 };
