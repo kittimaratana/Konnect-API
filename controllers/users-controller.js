@@ -19,16 +19,6 @@ const userAttr = [
 ];
 
 //get main user profile
-/* GET
-http://localhost:5001/users
- headers: {
-    authorization: "Bearer " + token,
-  },
-  data: {
-    // Your body data here
-  }
-*/
-
 const getUser = async (req, res) => {
 
   if (!req.headers.authorization) {
@@ -139,21 +129,13 @@ const updateUser = async (req, res) => {
   }
 }
 
+//get other user details
 const getOtherUser = async (req, res) => {
 
   if (!req.headers.authorization) {
     return res.status(401).send("Please login");
   }
 
-  /* i dont think i need this again right?
-  const authHeader = req.headers.authorization;
-  const authToken = authHeader.split(" ")[1];
-  const decodedToken = jwt.verify(authToken, "secret_key");
-  */
-
-  // Verify the token and call user to get details
-  //get users
-  //http://localhost:5001/users/005f690d-15bf-4b90-b8f1-187a0f716367
   try {
     const userResponse = await knex("users")
       .select(userAttr)

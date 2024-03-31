@@ -50,7 +50,7 @@ function createUser() {
       pet_peeves: randomItem(petPeeves)
     });
 
-    //every 10th person make an event but users can only make one event
+    //every 5th person make an event 
     if (i%5 === 0) {
       const eventDetail = eventDetails[0];
 
@@ -66,7 +66,6 @@ function createUser() {
   }
 
   return {users, events}
-  //image: faker.image.urlLoremFlickr({ category: 'people' }),
 };
 
 const {users, events} = createUser();
@@ -80,7 +79,3 @@ exports.seed = async function (knex) {
   await knex('event_details').insert(events);
 }
 
-
-
-//midjourney 
-//https://www.pexels.com/search/profile%20picture/

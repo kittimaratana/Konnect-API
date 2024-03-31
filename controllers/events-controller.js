@@ -26,8 +26,6 @@ const getEvent = async (req, res) => {
             existingEventsList.push(event["event_id"])
         })
 
-        //redo map and then do first next when the guest is not over
-
         //pull event details
         const newEventsResponse = await knex("event_details")
             .whereNotIn("id", existingEventsList)
@@ -42,15 +40,6 @@ const getEvent = async (req, res) => {
 }
 
 //post a new event
-/* POST http://localhost:5001/events
-{
-    "date": "2022-01-01",
-    "time": "8:00 pm",
-    "location": "Terroni",
-    "max_guests": "9",
-    "description": "Come meet me for pasta"
-}
-*/
 const postEvent = async (req, res) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
@@ -96,7 +85,6 @@ const postEvent = async (req, res) => {
             .where({ id: newEventId })
             .first();
 
-        //which one to put in response probably created Event
         const attendanceInput = {
             event_id: newEventId,
             status: "Hosting",
@@ -112,18 +100,11 @@ const postEvent = async (req, res) => {
 }
 
 //get user attendance list for event 
-//GET http://localhost:5001/events/55 -- remember to get eventId not userId
 const userAttendanceList = async (req, res) => {
 
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
     }
-
-    /*
-    const authHeader = req.headers.authorization;
-    const authToken = authHeader.split(" ")[1];
-    const decodedToken = jwt.verify(authToken, "secret_key");
-    */
 
     // Verify the token and get event
     try {
@@ -149,7 +130,6 @@ const userAttendanceList = async (req, res) => {
 }
 
 //post attendance status whether Pending, Cancelled
-//needs event_id, status
 const postAttendanceStatus = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -185,23 +165,11 @@ const postAttendanceStatus = async (req, res) => {
 }
 
 //update attendance status - {options going, cancelled, rejected}, hosting, pending
-//probably need to have queing system long term
-//Going -> add one space and call information, if full change everyone else to Rejected, change the user to Going, 
-//Rejected -> change the user to rejected
-//Cancelled -> change the user to cancelled
-//needs event_id, status, user_id
 const updateAttendanceStatus = async (req, res) => {
 
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
     }
-
-    /*
-    const authHeader = req.headers.authorization;
-    const authToken = authHeader.split(" ")[1];
-    const decodedToken = jwt.verify(authToken, "secret_key");
-    //const hostuserId = decodedToken.id;
-    */
 
     const { attendance_id, event_id, status, user_id } = req.body;
     console.log(attendance_id);

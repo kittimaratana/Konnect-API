@@ -1,3 +1,4 @@
+//routes for making event and attendance updates
 const router = require('express').Router();
 const eventsController = require('../controllers/events-controller');
 

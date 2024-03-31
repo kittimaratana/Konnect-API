@@ -1,3 +1,4 @@
+//user routes and adding nulter middleware for image uploads
 const router = require('express').Router();
 const express = require('express');
 const multer = require('multer');

@@ -10,15 +10,14 @@ const eventsRoutes = require('./routes/events-routes');
 //allows request to get static assets in /public folder
 app.use(express.static("public"));
 
-// Express middleware
+// express
 app.use(express.json());
-//app.use(cors({ origin: CORS_ORIGIN }));
 app.use((req, _res, next) => {
     next();
 
 });
 
-// // Configuring users endpoints
+//Configuring users endpoints
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
 app.use('/events', eventsRoutes);

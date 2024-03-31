@@ -1,5 +1,5 @@
+//user attendance seeds
 const knex = require("knex")(require("../knexfile"));
-//const { useState } = require('react');
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
