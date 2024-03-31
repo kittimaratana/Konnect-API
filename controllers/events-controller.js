@@ -140,8 +140,22 @@ const postAttendanceStatus = async (req, res) => {
     const authToken = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
-    const { event_id, status } = req.body;
 
+    const requiredFields = [
+        "event_id",
+        "status"
+    ];
+
+    //check if inputs are empty
+    for (const field of requiredFields) {
+        if (!req.body[field]) {
+            return res.status(400).json({
+                message: `invalid input: ${field} was null or empty`,
+            });
+        }
+    }
+
+    const { event_id, status } = req.body;
     //which one to put in response probably created Event
     const attendanceInput = {
         event_id: event_id,
@@ -169,6 +183,22 @@ const updateAttendanceStatus = async (req, res) => {
 
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
+    }
+
+    const requiredFields = [
+        "attendance_id",
+        "event_id",
+        "status",
+        "user_id"
+    ];
+
+    //check if inputs are empty
+    for (const field of requiredFields) {
+        if (!req.body[field]) {
+            return res.status(400).json({
+                message: `invalid input: ${field} was null or empty`,
+            });
+        }
     }
 
     const { attendance_id, event_id, status, user_id } = req.body;
