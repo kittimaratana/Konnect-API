@@ -172,10 +172,6 @@ const updateAttendanceStatus = async (req, res) => {
     }
 
     const { attendance_id, event_id, status, user_id } = req.body;
-    console.log(attendance_id);
-    console.log(event_id);
-    console.log(status);
-    console.log(user_id);
     const attendanceInput = {
         event_id: event_id,
         status: status,
