@@ -232,7 +232,7 @@ const updateAttendanceStatus = async (req, res) => {
             .where({ event_id: event_id })
             .andWhere({status: 'Pending'})
             .andWhereNot({ guest_user_id: user_id })
-            .update({ status: "Cancelled" });
+            .update({ status: "Rejected" });
         }
     }
 
