@@ -2,9 +2,8 @@ const { faker } = require('@faker-js/faker');
 const {v4: uuid} = require('uuid');
 let users = [];
 
-//created as faker doesnt have good profile images so images are pull from pexels
-//images must match user name, gender and uuid hence this is predefined
-//ran once before start and modify the gender to match with name if incorrect
+//users do not need to touch this file -----
+//completed manually before seed run to ensure user name matches gender and picture
 for(let i=0; i<50;i++) {
     let genderSex = faker.person.sex()
 
