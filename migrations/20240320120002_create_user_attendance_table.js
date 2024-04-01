@@ -2,6 +2,8 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
+
+//user_attendance table migration
 exports.up = function (knex) {
     return knex.schema.createTable('user_attendance', (table) => {
         table.increments('id').primary();

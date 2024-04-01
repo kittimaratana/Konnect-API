@@ -2,6 +2,8 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
+
+//users table migration
 exports.up = function (knex) {
     return knex.schema.createTable('users', (table) => {
         table.uuid('id').primary().defaultTo('uuid_generate_v4()');

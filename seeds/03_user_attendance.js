@@ -5,8 +5,10 @@ const knex = require("knex")(require("../knexfile"));
  * @returns { Promise<void> }
  */
 
-const event_details = async (_req, res) => {
+//get list of events and add to user attendance table host, random guest going and random guest pending
+const event_details = async () => {
   let user_attendance = [];
+
   try {
     const events = await knex("event_details")
       .select(
@@ -15,7 +17,6 @@ const event_details = async (_req, res) => {
       );
 
     for (let i = 0; i < events.length; i++) {
-
       //add host to user attendance
       user_attendance.push({
         event_id: events[i]["id"],

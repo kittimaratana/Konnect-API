@@ -1,18 +1,17 @@
 const { faker } = require('@faker-js/faker');
 const { activities, petPeeves, userProfile } = require("../variables/constants");
-const {v4: uuid} = require('uuid');
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
 
-//create randomizer pet peeves
+//create randomizer to select item from list
 function randomItem(field) {
   return field[Math.floor((Math.random() * field.length))]
 }
 
-//ensuring if user is making event it aligns with their interest
+//ensure user event aligns with their interest
 function interestList() {
   let interests = [];
   let eventDetails = [];
@@ -26,21 +25,22 @@ function interestList() {
   return {interests, eventDetails}
 }
 
+//create 50 person fake data profile
+//gender, name and images are predefined to ensure the test dataset makes sense
 function createUser() {
   let users = [];
   let events = [];
   
   for(let i=0; i<50;i++) {
-
     const {interests, eventDetails} = interestList();
 
     users.push({
-      id: userProfile[i]["id"], //predefined
-      first_name: userProfile[i]["first_name"], //predefined
-      last_name: userProfile[i]["last_name"], //predefined
+      id: userProfile[i]["id"],
+      first_name: userProfile[i]["first_name"], 
+      last_name: userProfile[i]["last_name"], 
       email: faker.internet.email(),
       password: faker.internet.password(),
-      gender: userProfile[i]["gender"], //predefined
+      gender: userProfile[i]["gender"],
       birthday: faker.date.between({from: '1980-01-01', to: '2014-01-05'}).toLocaleString("en-CA").substring(0,10),
       career: faker.person.jobTitle(),
       city: faker.location.city(),
@@ -50,7 +50,8 @@ function createUser() {
       pet_peeves: randomItem(petPeeves)
     });
 
-    //every 5th person make an event 
+    //every 5th person make an event and set total_guests to 2 currently as user_attendance seed will add a "going" guest to the event
+    //set max guests to minimum 3 as we want the max guests to be larger than total guests so users can still request to join and see event in the explore page
     if (i%5 === 0) {
       const eventDetail = eventDetails[0];
 
@@ -58,8 +59,8 @@ function createUser() {
         user_id: userProfile[i]["id"],
         date: faker.date.between({from: '2024-04-05', to: '2024-04-19'}).toLocaleString("en-CA").substring(0,10),
         location: eventDetail.location,
-        max_guests: Math.floor(Math.random()*7) + 3, //3-8 guests so even if there's another guest from seed data attending event user can see request to join for demo
-        total_guests: 2, //putting 2 as we are adding another attendee in the user attendance seed after
+        max_guests: Math.floor(Math.random()*7) + 3, 
+        total_guests: 2, 
         description: eventDetail.description
       })
     }

@@ -1,13 +1,12 @@
-//user routes and adding nulter middleware for image uploads
+//user routes and adding multer middleware for image uploads
 const router = require('express').Router();
-const express = require('express');
 const multer = require('multer');
 const usersController = require('../controllers/users-controller');
 
-//add middleware to upload iamges
+//add middleware to upload images
 const imageStorage = multer.diskStorage({
   destination: './public/images/',
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     cb(null, file.originalname);
   }
 })

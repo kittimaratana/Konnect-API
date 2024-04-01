@@ -1,8 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
 const jwt = require("jsonwebtoken");
-const express = require('express');
 
-//fields to select for users
+//fields to select for users excluding fields like password
 const userAttr = [
   "id",
   "first_name",
@@ -44,6 +43,8 @@ const getUser = async (req, res) => {
   }
 }
 
+//add user profile information to users table
+//placeholder data was added when user first added their register login credentials and now users are filling out additional profile details
 const updateUser = async (req, res) => {
   if (!req.headers.authorization) {
     return res.status(401).send("Please login");
@@ -76,7 +77,7 @@ const updateUser = async (req, res) => {
     }
   }
 
-  //pull details that users are not able to update themselves 
+  //pull details that users are not able to update themselves like password and email
   try {
     const userResponse = await knex("users")
       .where({ id: userId })
@@ -104,7 +105,7 @@ const updateUser = async (req, res) => {
       pet_peeves: req.body["pet_peeves"]
     };
 
-    //update user row
+    //update user row and send back user details
     const rowsUpdated = await knex("users")
       .where({ id: updatedUserAccount.id })
       .update(updatedUserAccount);
@@ -115,7 +116,6 @@ const updateUser = async (req, res) => {
       });
     }
 
-    //send data back to user
     const updatedUserResponse = await knex("users")
       .select(userAttr)
       .where({ id: updatedUserAccount.id })

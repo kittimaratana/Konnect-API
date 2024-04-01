@@ -13,21 +13,19 @@ const getEvent = async (req, res) => {
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
 
-    // Verify the token and get event
+    //ensure event outputted is not event user has already seen nor event is at capacity
     try {
-        //pull list of events user has status in
         const existingEventsId = await knex("user_attendance")
             .select("event_id")
             .where({ guest_user_id: userId })
             .groupBy("event_id")
 
-        let existingEventsList = []
+        let existingEventsList = [];
+
         existingEventsId.forEach(event => {
             existingEventsList.push(event["event_id"])
         })
 
-        //pull list of events that users not part of and loop through each to see if theres one where max guest > total guest
-        //knex doesnt have proper where statement like sql
         const otherEvents = await knex("event_details")
             .whereNotIn("id", existingEventsList)
 
@@ -58,6 +56,7 @@ const postEvent = async (req, res) => {
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
 
+    //check if inputs are empty
     const requiredFields = [
         "date",
         "location",
@@ -65,7 +64,6 @@ const postEvent = async (req, res) => {
         "description"
     ];
 
-    //check if inputs are empty
     for (const field of requiredFields) {
         if (!req.body[field]) {
             return res.status(400).json({
@@ -83,7 +81,7 @@ const postEvent = async (req, res) => {
         description: req.body.description
     };
 
-    //find the user and create token
+    //output user attendance details
     try {
         const eventId = await knex("event_details").insert(eventInput);
 
@@ -114,7 +112,8 @@ const userAttendanceList = async (req, res) => {
         return res.status(401).send("Please login");
     }
 
-    // Verify the token and get event
+    //get attendees if they have status pending, going, hosting
+    //we do not care about people with status cancelled or uninterested
     try {
         const userAttendanceList = await knex("user_attendance")
             .join("users", "users.id", "user_attendance.guest_user_id")
@@ -137,7 +136,8 @@ const userAttendanceList = async (req, res) => {
     }
 }
 
-//post attendance status whether Pending, Cancelled
+//post attendance status when user makes an action from explore page
+//status is either uninterested or pending if user wants to attend
 const postAttendanceStatus = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -149,12 +149,12 @@ const postAttendanceStatus = async (req, res) => {
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
 
+    //check that required fields are not empty
     const requiredFields = [
         "event_id",
         "status"
     ];
 
-    //check if inputs are empty
     for (const field of requiredFields) {
         if (!req.body[field]) {
             return res.status(400).json({
@@ -164,13 +164,13 @@ const postAttendanceStatus = async (req, res) => {
     }
 
     const { event_id, status } = req.body;
-    //which one to put in response probably created Event
     const attendanceInput = {
         event_id: event_id,
         status: status,
         guest_user_id: userId
     };
 
+    //add user attendance and output attendance status
     try {
         await knex("user_attendance").insert(attendanceInput);
 
@@ -186,13 +186,14 @@ const postAttendanceStatus = async (req, res) => {
     }
 }
 
-//update attendance status - {options here are going, cancelled, rejected}
+//update attendance status with either going, cancelled or rejected
 const updateAttendanceStatus = async (req, res) => {
 
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
     }
 
+    //check if inputs are empty
     const requiredFields = [
         "attendance_id",
         "event_id",
@@ -200,7 +201,6 @@ const updateAttendanceStatus = async (req, res) => {
         "user_id"
     ];
 
-    //check if inputs are empty
     for (const field of requiredFields) {
         if (!req.body[field]) {
             return res.status(400).json({
@@ -216,13 +216,13 @@ const updateAttendanceStatus = async (req, res) => {
         guest_user_id: user_id,
     };
 
-    //if going, change event_details guest count
+    //if going, increment total guest count
+    //if event capacity is at max, set other guests who are pending to rejected
     if (status === "Going") {
-        const updatedEventDetailsRow = await knex("event_details")
+        await knex("event_details")
             .where({ id: event_id })
             .increment("total_guests", 1);
 
-        //if total guest is equal to max guest set all remaining pending statuses to rejected except current guest
         const currentEventDetails = await knex("event_details")
             .where({ id: event_id })
             .first()
@@ -236,7 +236,7 @@ const updateAttendanceStatus = async (req, res) => {
         }
     }
 
-    //update the event status for guest
+    //update the event status for guest and output attendance status
     await knex("user_attendance")
     .where({ id: attendance_id })
     .update(attendanceInput);
@@ -249,7 +249,7 @@ const updateAttendanceStatus = async (req, res) => {
     res.status(201).json(createdAttendanceInput);
 }
 
-//get upcoming events
+//get upcoming events that user is currently pending or going too
 const getUpcomingEvents = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -261,9 +261,7 @@ const getUpcomingEvents = async (req, res) => {
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
 
-    // Verify the token and get event
     try {
-        //pull list of events user is attending or pending
         const upcomingEvents = await knex("user_attendance")
             .join("event_details", "event_details.id", "user_attendance.event_id")
             .join("users", "users.id", "event_details.user_id")
@@ -287,7 +285,7 @@ const getUpcomingEvents = async (req, res) => {
     }
 }
 
-//get upcoming events
+//get events that user is hosting and check to see if there are pending requests to join the event
 const getHostingEvents = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -299,9 +297,8 @@ const getHostingEvents = async (req, res) => {
     const decodedToken = jwt.verify(authToken, "secret_key");
     const userId = decodedToken.id;
 
-    // Verify the token and get event
     try {
-        //pull list of events user is hosting and status if pending to notify
+        //get list of pending events 
         const pendingEvents = await knex("user_attendance")
             .select("event_id")
             .where("status", "Pending")
@@ -312,6 +309,7 @@ const getHostingEvents = async (req, res) => {
             pendingEventsSet.add(event["event_id"])
         })
 
+        //get list of events user is hosting
         const eventsHosting = await knex("event_details")
             .join("users", "users.id", "event_details.user_id")
             .select(
@@ -327,6 +325,7 @@ const getHostingEvents = async (req, res) => {
 
         let eventsHostingDetailed = []
 
+        //output events user is hosting and add pending status if there are requests to join event user has not accepted or declined
         eventsHosting.forEach(event => {            
             const eventDetails = {
                 id: event["id"],
@@ -348,16 +347,14 @@ const getHostingEvents = async (req, res) => {
     }
 }
 
-//get events that user is currently part of
+//get events details
 const getEventDetails = async (req, res) => {
 
     if (!req.headers.authorization) {
         return res.status(401).send("Please login");
     }
 
-    // Verify the token and get event
     try {
-        //pull event details
         const eventsResponse = await knex("event_details")
             .where({ "id": req.params.eventId })
             .first();

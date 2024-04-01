@@ -20,6 +20,7 @@ const login = async(req,res) => {
     if (user.id === "") {
       return res.status(400).send("Invalid email");
     }
+
     const token = jwt.sign({id: user.id}, "secret_key", {expiresIn: "24h"})
     res.status(200).send({ token });
   } catch (err) {
@@ -35,6 +36,7 @@ const register = async(req,res) => {
     return res.status(404).send("Please enter the required fields");
   }
 
+  //most information are placeholder values until user adds their profile details in the register profile screen
   const userAccount = {
     id: uuid(),
     first_name: first_name,
@@ -51,7 +53,7 @@ const register = async(req,res) => {
     pet_peeves: "No pet peeves"
   };
 
-  //find the user and create token
+  //create new user account and send token back
   try {
     const userResult = await knex("users").insert(userAccount);
 
