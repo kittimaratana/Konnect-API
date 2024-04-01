@@ -26,11 +26,19 @@ const getEvent = async (req, res) => {
             existingEventsList.push(event["event_id"])
         })
 
-        //pull event details
-        const newEventsResponse = await knex("event_details")
+        //pull list of events that users not part of and loop through each to see if theres one where max guest > total guest
+        //knex doesnt have proper where statement like sql
+        const otherEvents = await knex("event_details")
             .whereNotIn("id", existingEventsList)
-            .andWhere("max_guests", ">", "total_guests")
-            .first();
+
+        let newEventsResponse;
+        
+        for(let i=0; i < otherEvents.length; i++) {
+            if(otherEvents[i].max_guests > otherEvents[i].total_guests) {
+                newEventsResponse = otherEvents[i];
+                break
+            }
+        }
 
         res.status(200).json(newEventsResponse);
     } catch (error) {
@@ -178,7 +186,7 @@ const postAttendanceStatus = async (req, res) => {
     }
 }
 
-//update attendance status - {options going, cancelled, rejected}, hosting, pending
+//update attendance status - {options here are going, cancelled, rejected}
 const updateAttendanceStatus = async (req, res) => {
 
     if (!req.headers.authorization) {
@@ -220,8 +228,11 @@ const updateAttendanceStatus = async (req, res) => {
             .first()
 
         if (currentEventDetails["total_guests"] === currentEventDetails["max_guests"]) {
-
-            await knex("user_attendance").where({ event_id: event_id }).andWhereNot({ guest_user_id: user_id }).update({ status: "Cancelled" });
+            await knex("user_attendance")
+            .where({ event_id: event_id })
+            .andWhere({status: 'Pending'})
+            .andWhereNot({ guest_user_id: user_id })
+            .update({ status: "Cancelled" });
         }
     }
 
@@ -269,7 +280,7 @@ const getUpcomingEvents = async (req, res) => {
             .whereIn("user_attendance.status", ["Pending", "Going"])
             .andWhere("user_attendance.guest_user_id", userId);
 
-        res.status(200).json(upcomingEvents); //remember user_id is host
+        res.status(200).json(upcomingEvents); 
     } catch (error) {
         console.error(error);
         res.status(401).send("Invalid auth token");

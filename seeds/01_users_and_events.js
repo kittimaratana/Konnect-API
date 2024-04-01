@@ -59,7 +59,7 @@ function createUser() {
         date: faker.date.between({from: '2024-04-05', to: '2024-04-19'}).toLocaleString("en-CA").substring(0,10),
         location: eventDetail.location,
         max_guests: Math.floor(Math.random()*7) + 3, //3-8 guests so even if there's another guest from seed data attending event user can see request to join for demo
-        total_guests: 1,
+        total_guests: 2, //putting 2 as we are adding another attendee in the user attendance seed after
         description: eventDetail.description
       })
     }
